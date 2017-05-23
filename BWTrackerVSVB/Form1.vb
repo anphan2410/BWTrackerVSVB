@@ -1,5 +1,18 @@
-﻿Imports System.Threading
+﻿Imports Excel = Microsoft.Office.Interop.Excel
+Imports Microsoft.Office
 Public Class Form1
+    Dim ExcelApp As New Excel.Application
+    Dim BWTrackerWB As Excel.Workbook = ExcelApp _
+        .Workbooks.Open(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) _
+        & "\BWTracker.xlsx")
+    Dim BWTrackerWS As Excel.Worksheet = BWTrackerWB.Worksheets("BWTracker")
+    Dim KeyHierarchyWS As Excel.Worksheet = BWTrackerWB.Worksheets("KeyHierarchy")
+
+    Private Sub SaveBWTrackerAndExitExcelApplication()
+        BWTrackerWB.Save()
+        BWTrackerWB.Close()
+        ExcelApp.Quit()
+    End Sub
     Private Sub ButtonClearTextBoxTaskDescription_Click(sender As Object, e As EventArgs)
         TextBoxTaskDescription.Clear()
     End Sub
@@ -49,12 +62,20 @@ Public Class Form1
     End Sub
 
     Private Sub ButtonTimingAnimationSTOP()
-        MsgBox(TextBoxTaskDescription.Text)
+        BWTrackerWB.Save()
         ButtonTimingAnimation.Enabled = False
         ButtonTimingAnimation.Visible = False
         Me.Width = 400
         Me.Height = 152
         TaskSettingPanel.Enabled = True
         TaskSettingPanel.Visible = True
+    End Sub
+
+    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+    End Sub
+
+    Private Sub Form1_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
+        SaveBWTrackerAndExitExcelApplication()
     End Sub
 End Class

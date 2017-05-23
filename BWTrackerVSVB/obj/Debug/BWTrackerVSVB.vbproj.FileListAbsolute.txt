@@ -8,3 +8,4 @@ D:\GitMe\anphan2410\BWTrackerVSVB\BWTrackerVSVB\obj\Debug\BWTrackerVSVB.vbproj.G
 D:\GitMe\anphan2410\BWTrackerVSVB\BWTrackerVSVB\obj\Debug\BWTrackerVSVB.exe
 D:\GitMe\anphan2410\BWTrackerVSVB\BWTrackerVSVB\obj\Debug\BWTrackerVSVB.xml
 D:\GitMe\anphan2410\BWTrackerVSVB\BWTrackerVSVB\obj\Debug\BWTrackerVSVB.pdb
+D:\GitMe\anphan2410\BWTrackerVSVB\BWTrackerVSVB\obj\Debug\BWTrackerVSVB.vbproj.ResolveComReference.cache
