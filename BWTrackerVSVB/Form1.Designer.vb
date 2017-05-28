@@ -28,7 +28,7 @@ Partial Class Form1
         Me.ButtonClearTextBoxTaskPath = New System.Windows.Forms.Button()
         Me.TextBoxTaskPath = New System.Windows.Forms.TextBox()
         Me.LabelTaskPath = New System.Windows.Forms.Label()
-        Me.ButtonClearMoreInfo = New System.Windows.Forms.Button()
+        Me.ButtonClearTextBoxMoreInfo = New System.Windows.Forms.Button()
         Me.TextBoxMoreInfo = New System.Windows.Forms.TextBox()
         Me.LabelMoreInfo = New System.Windows.Forms.Label()
         Me.LabelTaskDescription = New System.Windows.Forms.Label()
@@ -77,7 +77,7 @@ Partial Class Form1
         Me.TaskSettingPanel.Controls.Add(Me.ButtonClearTextBoxTaskPath, 16, 1)
         Me.TaskSettingPanel.Controls.Add(Me.TextBoxTaskPath, 1, 1)
         Me.TaskSettingPanel.Controls.Add(Me.LabelTaskPath, 0, 1)
-        Me.TaskSettingPanel.Controls.Add(Me.ButtonClearMoreInfo, 15, 2)
+        Me.TaskSettingPanel.Controls.Add(Me.ButtonClearTextBoxMoreInfo, 15, 2)
         Me.TaskSettingPanel.Controls.Add(Me.TextBoxMoreInfo, 3, 2)
         Me.TaskSettingPanel.Controls.Add(Me.LabelMoreInfo, 0, 2)
         Me.TaskSettingPanel.Controls.Add(Me.LabelTaskDescription, 0, 0)
@@ -146,18 +146,18 @@ Partial Class Form1
         Me.LabelTaskPath.TabIndex = 12
         Me.LabelTaskPath.Text = "Task Path"
         '
-        'ButtonClearMoreInfo
+        'ButtonClearTextBoxMoreInfo
         '
-        Me.ButtonClearMoreInfo.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+        Me.ButtonClearTextBoxMoreInfo.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.ButtonClearMoreInfo.Location = New System.Drawing.Point(330, 44)
-        Me.ButtonClearMoreInfo.Margin = New System.Windows.Forms.Padding(0)
-        Me.ButtonClearMoreInfo.Name = "ButtonClearMoreInfo"
-        Me.ButtonClearMoreInfo.Size = New System.Drawing.Size(30, 22)
-        Me.ButtonClearMoreInfo.TabIndex = 11
-        Me.ButtonClearMoreInfo.Text = "X"
-        Me.ButtonClearMoreInfo.UseVisualStyleBackColor = True
+        Me.ButtonClearTextBoxMoreInfo.Location = New System.Drawing.Point(330, 44)
+        Me.ButtonClearTextBoxMoreInfo.Margin = New System.Windows.Forms.Padding(0)
+        Me.ButtonClearTextBoxMoreInfo.Name = "ButtonClearTextBoxMoreInfo"
+        Me.ButtonClearTextBoxMoreInfo.Size = New System.Drawing.Size(30, 22)
+        Me.ButtonClearTextBoxMoreInfo.TabIndex = 11
+        Me.ButtonClearTextBoxMoreInfo.Text = "X"
+        Me.ButtonClearTextBoxMoreInfo.UseVisualStyleBackColor = True
         '
         'TextBoxMoreInfo
         '
@@ -263,7 +263,7 @@ Partial Class Form1
     Friend WithEvents ButtonClearTextBoxTaskPath As Button
     Friend WithEvents TextBoxTaskPath As TextBox
     Friend WithEvents LabelTaskPath As Label
-    Friend WithEvents ButtonClearMoreInfo As Button
+    Friend WithEvents ButtonClearTextBoxMoreInfo As Button
     Friend WithEvents TextBoxMoreInfo As TextBox
     Friend WithEvents LabelMoreInfo As Label
     Friend WithEvents LabelTaskDescription As Label
