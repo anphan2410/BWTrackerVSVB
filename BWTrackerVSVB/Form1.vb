@@ -135,16 +135,12 @@ Public Class Form1
         TextBoxTaskDescription.Clear()
     End Sub
 
-    Private Sub ButtonClearTextBoxTaskPath_Click(sender As Object, e As EventArgs) Handles ButtonClearTextBoxTaskPath.Click
-        TextBoxTaskPath.Clear()
-    End Sub
-
     Private Sub ButtonStart_Click(sender As Object, e As EventArgs) Handles ButtonStart.Click
         If (String.IsNullOrEmpty(Trim(TextBoxTaskDescription.Text))) Then
             MsgBox("Please assign a description for this task", MsgBoxStyle.OkOnly, "Empty Task Description")
             Exit Sub
         End If
-        If (String.IsNullOrEmpty(Trim(TextBoxTaskPath.Text))) Then
+        If (String.IsNullOrEmpty(Trim(ComboBoxTaskPath.Text))) Then
             MsgBox("Please assign a path for this task", MsgBoxStyle.OkOnly, "Empty Task Path")
             Exit Sub
         End If
@@ -211,13 +207,13 @@ Public Class Form1
         Dim UniqueKeyRng As Excel.Range
         Dim ParentKeyRng As Excel.Range
         Dim TaskPathSource As New AutoCompleteStringCollection()
-        'TaskPathSource.Add("AscenX")
-        'TaskPathSource.Add("AscenX/TamIoT")
-        'TaskPathSource.Add("AscenX/HieuCMS")
-        'TaskPathSource.Add("AscenX/SonSETraining")
-        TextBoxTaskPath.AutoCompleteCustomSource = TaskPathSource
-        TextBoxTaskPath.AutoCompleteMode = AutoCompleteMode.SuggestAppend
-        TextBoxTaskPath.AutoCompleteSource = AutoCompleteSource.CustomSource
+        TaskPathSource.Add("AscenX")
+        TaskPathSource.Add("AscenX/TamIoT")
+        TaskPathSource.Add("AscenX/HieuCMS")
+        TaskPathSource.Add("AscenX/SonSETraining")
+        ComboBoxTaskPath.AutoCompleteCustomSource = TaskPathSource
+        ComboBoxTaskPath.AutoCompleteMode = AutoCompleteMode.SuggestAppend
+        ComboBoxTaskPath.AutoCompleteSource = AutoCompleteSource.CustomSource
     End Sub
 
     Private Sub Form1_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
@@ -235,5 +231,9 @@ Public Class Form1
 
     Private Sub ButtonClearTextBoxMoreInfo_Click(sender As Object, e As EventArgs) Handles ButtonClearTextBoxMoreInfo.Click
         TextBoxMoreInfo.Clear()
+    End Sub
+
+    Private Sub ButtonClearComboBoxTaskPath_Click(sender As Object, e As EventArgs) Handles ButtonClearComboBoxTaskPath.Click
+        ComboBoxTaskPath.ResetText()
     End Sub
 End Class

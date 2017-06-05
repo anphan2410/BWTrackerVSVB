@@ -25,8 +25,7 @@ Partial Class Form1
         Me.components = New System.ComponentModel.Container()
         Me.ButtonTimingAnimation = New System.Windows.Forms.Button()
         Me.TaskSettingPanel = New System.Windows.Forms.TableLayoutPanel()
-        Me.ButtonClearTextBoxTaskPath = New System.Windows.Forms.Button()
-        Me.TextBoxTaskPath = New System.Windows.Forms.TextBox()
+        Me.ButtonClearComboBoxTaskPath = New System.Windows.Forms.Button()
         Me.LabelTaskPath = New System.Windows.Forms.Label()
         Me.ButtonClearTextBoxMoreInfo = New System.Windows.Forms.Button()
         Me.TextBoxMoreInfo = New System.Windows.Forms.TextBox()
@@ -35,6 +34,7 @@ Partial Class Form1
         Me.TextBoxTaskDescription = New System.Windows.Forms.TextBox()
         Me.ButtonClearTextBoxTaskDescription = New System.Windows.Forms.Button()
         Me.ButtonStart = New System.Windows.Forms.Button()
+        Me.ComboBoxTaskPath = New System.Windows.Forms.ComboBox()
         Me.TimerButtonTimingAnimationDown = New System.Windows.Forms.Timer(Me.components)
         Me.TaskSettingPanel.SuspendLayout()
         Me.SuspendLayout()
@@ -74,8 +74,7 @@ Partial Class Form1
         Me.TaskSettingPanel.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 22.0!))
         Me.TaskSettingPanel.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 22.0!))
         Me.TaskSettingPanel.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 30.0!))
-        Me.TaskSettingPanel.Controls.Add(Me.ButtonClearTextBoxTaskPath, 16, 1)
-        Me.TaskSettingPanel.Controls.Add(Me.TextBoxTaskPath, 1, 1)
+        Me.TaskSettingPanel.Controls.Add(Me.ButtonClearComboBoxTaskPath, 16, 1)
         Me.TaskSettingPanel.Controls.Add(Me.LabelTaskPath, 0, 1)
         Me.TaskSettingPanel.Controls.Add(Me.ButtonClearTextBoxMoreInfo, 15, 2)
         Me.TaskSettingPanel.Controls.Add(Me.TextBoxMoreInfo, 3, 2)
@@ -84,6 +83,7 @@ Partial Class Form1
         Me.TaskSettingPanel.Controls.Add(Me.TextBoxTaskDescription, 3, 0)
         Me.TaskSettingPanel.Controls.Add(Me.ButtonClearTextBoxTaskDescription, 15, 0)
         Me.TaskSettingPanel.Controls.Add(Me.ButtonStart, 6, 3)
+        Me.TaskSettingPanel.Controls.Add(Me.ComboBoxTaskPath, 3, 1)
         Me.TaskSettingPanel.Location = New System.Drawing.Point(13, 13)
         Me.TaskSettingPanel.Margin = New System.Windows.Forms.Padding(0)
         Me.TaskSettingPanel.Name = "TaskSettingPanel"
@@ -107,30 +107,18 @@ Partial Class Form1
         Me.TaskSettingPanel.Size = New System.Drawing.Size(360, 90)
         Me.TaskSettingPanel.TabIndex = 10
         '
-        'ButtonClearTextBoxTaskPath
+        'ButtonClearComboBoxTaskPath
         '
-        Me.ButtonClearTextBoxTaskPath.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+        Me.ButtonClearComboBoxTaskPath.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.ButtonClearTextBoxTaskPath.Location = New System.Drawing.Point(330, 22)
-        Me.ButtonClearTextBoxTaskPath.Margin = New System.Windows.Forms.Padding(0)
-        Me.ButtonClearTextBoxTaskPath.Name = "ButtonClearTextBoxTaskPath"
-        Me.ButtonClearTextBoxTaskPath.Size = New System.Drawing.Size(30, 22)
-        Me.ButtonClearTextBoxTaskPath.TabIndex = 14
-        Me.ButtonClearTextBoxTaskPath.Text = "X"
-        Me.ButtonClearTextBoxTaskPath.UseVisualStyleBackColor = True
-        '
-        'TextBoxTaskPath
-        '
-        Me.TextBoxTaskPath.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.TaskSettingPanel.SetColumnSpan(Me.TextBoxTaskPath, 12)
-        Me.TextBoxTaskPath.Location = New System.Drawing.Point(66, 22)
-        Me.TextBoxTaskPath.Margin = New System.Windows.Forms.Padding(0)
-        Me.TextBoxTaskPath.Name = "TextBoxTaskPath"
-        Me.TextBoxTaskPath.Size = New System.Drawing.Size(264, 21)
-        Me.TextBoxTaskPath.TabIndex = 13
+        Me.ButtonClearComboBoxTaskPath.Location = New System.Drawing.Point(330, 22)
+        Me.ButtonClearComboBoxTaskPath.Margin = New System.Windows.Forms.Padding(0)
+        Me.ButtonClearComboBoxTaskPath.Name = "ButtonClearComboBoxTaskPath"
+        Me.ButtonClearComboBoxTaskPath.Size = New System.Drawing.Size(30, 22)
+        Me.ButtonClearComboBoxTaskPath.TabIndex = 14
+        Me.ButtonClearComboBoxTaskPath.Text = "X"
+        Me.ButtonClearComboBoxTaskPath.UseVisualStyleBackColor = True
         '
         'LabelTaskPath
         '
@@ -237,6 +225,19 @@ Partial Class Form1
         Me.ButtonStart.Text = "START"
         Me.ButtonStart.UseVisualStyleBackColor = True
         '
+        'ComboBoxTaskPath
+        '
+        Me.ComboBoxTaskPath.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.TaskSettingPanel.SetColumnSpan(Me.ComboBoxTaskPath, 12)
+        Me.ComboBoxTaskPath.FormattingEnabled = True
+        Me.ComboBoxTaskPath.Location = New System.Drawing.Point(66, 22)
+        Me.ComboBoxTaskPath.Margin = New System.Windows.Forms.Padding(0)
+        Me.ComboBoxTaskPath.Name = "ComboBoxTaskPath"
+        Me.ComboBoxTaskPath.Size = New System.Drawing.Size(264, 23)
+        Me.ComboBoxTaskPath.TabIndex = 16
+        '
         'TimerButtonTimingAnimationDown
         '
         Me.TimerButtonTimingAnimationDown.Interval = 5000
@@ -260,8 +261,7 @@ Partial Class Form1
 
     Friend WithEvents ButtonTimingAnimation As Button
     Friend WithEvents TaskSettingPanel As TableLayoutPanel
-    Friend WithEvents ButtonClearTextBoxTaskPath As Button
-    Friend WithEvents TextBoxTaskPath As TextBox
+    Friend WithEvents ButtonClearComboBoxTaskPath As Button
     Friend WithEvents LabelTaskPath As Label
     Friend WithEvents ButtonClearTextBoxMoreInfo As Button
     Friend WithEvents TextBoxMoreInfo As TextBox
@@ -271,4 +271,5 @@ Partial Class Form1
     Friend WithEvents ButtonClearTextBoxTaskDescription As Button
     Friend WithEvents ButtonStart As Button
     Friend WithEvents TimerButtonTimingAnimationDown As Timer
+    Friend WithEvents ComboBoxTaskPath As ComboBox
 End Class
