@@ -10,6 +10,7 @@ Public Class Form1
     Private BWTrackerWB As Excel.Workbook
     Private BWTrackerWS As Excel.Worksheet
     Private KeyHierarchyWS As Excel.Worksheet
+    Private TaskPathCollection As New MSVBCollection
 
     Private Sub StoreNumbersOfHiddenRowsIntoACollection(ASheet As Excel.Worksheet, ByRef DestinationCollection As MSVBCollection)
         For i As Integer = 1 To ASheet.UsedRange.Rows.Count
@@ -82,6 +83,7 @@ Public Class Form1
                                 Optional PureDataMode As Boolean = False) As Excel.Range
         Dim HiddenRowCollection As New MSVBCollection
         Dim HiddenColumnCollection As New MSVBCollection
+        Dim HeaderCellIsSet As Boolean = False
         If (PureDataMode) Then
             StoreNumbersOfHiddenRowsIntoACollection(ASheet, HiddenRowCollection)
             StoreNumbersOfHiddenColumnsIntoACollection(ASheet, HiddenColumnCollection)
@@ -111,8 +113,9 @@ Public Class Form1
                         Next
                         PercentMatched = count / LastDataColumnOfCurrentRow
                         If (PercentMatched >= AccuracyPercent) Then
-                            HeaderCell = DirectCast(ASheet.Cells(i, 1), Excel.Range)
-                            Exit Function
+                            HeaderCell = DirectCast(ASheet.Cells(i, LastDataColumnOfCurrentRow), Excel.Range)
+                            HeaderCellIsSet = True
+                            Exit For
                         End If
                         If (count > maxNumbersOfBoldCellsInARow) Then
                             maxNumbersOfBoldCellsInARow = count
@@ -120,7 +123,10 @@ Public Class Form1
                         End If
                     End If
                 Next
-                HeaderCell = DirectCast(ASheet.Cells(tmpHeaderRowNumber, 1), Excel.Range)
+                If (Not HeaderCellIsSet) Then
+                    HeaderCell = DirectCast(ASheet.Cells(tmpHeaderRowNumber,
+                                                         LastDataCellOfARow(ASheet.Rows(tmpHeaderRowNumber)).Column), Excel.Range)
+                End If
             End If
         End If
         If (PureDataMode) Then
@@ -204,16 +210,24 @@ Public Class Form1
         End While
         BWTrackerWS = BWTrackerWB.Worksheets(BWTrackerWSName)
         KeyHierarchyWS = BWTrackerWB.Worksheets(KeyHierarchyWSName)
-        Dim UniqueKeyRng As Excel.Range
-        Dim ParentKeyRng As Excel.Range
-        Dim TaskPathSource As New AutoCompleteStringCollection()
-        TaskPathSource.Add("AscenX")
-        TaskPathSource.Add("AscenX/TamIoT")
-        TaskPathSource.Add("AscenX/HieuCMS")
-        TaskPathSource.Add("AscenX/SonSETraining")
-        ComboBoxTaskPath.AutoCompleteCustomSource = TaskPathSource
-        ComboBoxTaskPath.AutoCompleteMode = AutoCompleteMode.SuggestAppend
-        ComboBoxTaskPath.AutoCompleteSource = AutoCompleteSource.CustomSource
+        Dim HeaderCell_key As Excel.Range = HeaderCell(KeyHierarchyWS, "key")
+        Dim HeaderCell_parentkey As Excel.Range = HeaderCell(KeyHierarchyWS, "parent key")
+        Dim KeyRng1 As Excel.Range = KeyHierarchyWS.Range(KeyHierarchyWS.Cells(HeaderCell_key.Row + 1, HeaderCell_key.Column),
+                                                          LastDataCellOfAColumn(KeyHierarchyWS.Columns(HeaderCell_key.Column)))
+        Dim ParentOfKeyRng1 As Excel.Range = KeyHierarchyWS.Range(KeyHierarchyWS.Cells(HeaderCell_parentkey.Row + 1, HeaderCell_parentkey.Column),
+                                                          LastDataCellOfAColumn(KeyHierarchyWS.Columns(HeaderCell_parentkey.Column)))
+        Dim currentRowNumber As Integer
+        Do
+
+        Loop Until ParentOfKeyRng1
+        'Dim TaskPathSource As New AutoCompleteStringCollection()
+        'TaskPathSource.Add("AscenX")
+        'TaskPathSource.Add("AscenX/TamIoT")
+        'TaskPathSource.Add("AscenX/HieuCMS")
+        'TaskPathSource.Add("AscenX/SonSETraining")
+        'ComboBoxTaskPath.AutoCompleteCustomSource = TaskPathSource
+        'ComboBoxTaskPath.AutoCompleteMode = AutoCompleteMode.SuggestAppend
+        'ComboBoxTaskPath.AutoCompleteSource = AutoCompleteSource.CustomSource
     End Sub
 
     Private Sub Form1_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
