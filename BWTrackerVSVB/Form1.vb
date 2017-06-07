@@ -93,6 +93,7 @@ Public Class Form1
         If ((UniqueKey IsNot Nothing) And (UniqueKey <> "")) Then
             HeaderCell = ASheet.UsedRange.Find(UniqueKey,
                                                LookIn:=Excel.XlFindLookIn.xlValues,
+                                               LookAt:=Excel.XlLookAt.xlWhole,
                                                SearchOrder:=Excel.XlSearchOrder.xlByRows,
                                                SearchDirection:=Excel.XlSearchDirection.xlNext,
                                                MatchCase:=True)
@@ -214,12 +215,42 @@ Public Class Form1
         Dim HeaderCell_parentkey As Excel.Range = HeaderCell(KeyHierarchyWS, "parent key")
         Dim KeyRng1 As Excel.Range = KeyHierarchyWS.Range(KeyHierarchyWS.Cells(HeaderCell_key.Row + 1, HeaderCell_key.Column),
                                                           LastDataCellOfAColumn(KeyHierarchyWS.Columns(HeaderCell_key.Column)))
-        Dim ParentOfKeyRng1 As Excel.Range = KeyHierarchyWS.Range(KeyHierarchyWS.Cells(HeaderCell_parentkey.Row + 1, HeaderCell_parentkey.Column),
-                                                          LastDataCellOfAColumn(KeyHierarchyWS.Columns(HeaderCell_parentkey.Column)))
-        Dim currentRowNumber As Integer
-        Do
-
-        Loop Until ParentOfKeyRng1
+        'Dim ParentOfKeyRng1 As Excel.Range = KeyHierarchyWS.Range(KeyHierarchyWS.Cells(HeaderCell_parentkey.Row + 1, HeaderCell_parentkey.Column),
+        '                                                  LastDataCellOfAColumn(KeyHierarchyWS.Columns(HeaderCell_parentkey.Column)))
+        Dim tmpStr As String = ""
+        Dim tmpStr1 As String = ""
+        Dim currentColumn As Integer
+        Dim currentRow As Integer
+        Dim tmpRng As Excel.Range
+        For Each aKey As Excel.Range In KeyRng1
+            currentRow = aKey.Row
+            currentColumn = aKey.Column
+            tmpStr = Trim(CStr(aKey.Value))
+            Do
+                If (currentColumn = HeaderCell_key.Column) Then
+                    currentColumn = HeaderCell_parentkey.Column
+                    tmpRng = DirectCast(KeyHierarchyWS.Cells(currentRow, currentColumn), Excel.Range)
+                    tmpStr1 = Trim(CStr(tmpRng.Value))
+                    tmpStr = tmpStr1 & "/" & tmpStr
+                ElseIf (currentColumn = HeaderCell_parentkey.Column) Then
+                    currentColumn = HeaderCell_key.Column
+                    currentRow = KeyRng1.Find(tmpStr1,
+                                              LookIn:=Excel.XlFindLookIn.xlValues,
+                                              LookAt:=Excel.XlLookAt.xlWhole,
+                                              SearchOrder:=Excel.XlSearchOrder.xlByRows,
+                                              SearchDirection:=Excel.XlSearchDirection.xlNext,
+                                              MatchCase:=True).Row
+                End If
+            Loop Until (String.IsNullOrEmpty(tmpStr1))
+            tmpStr1 = Trim(CStr(aKey.Value))
+            If (TaskPathCollection.Contains(tmpStr1)) Then
+                TaskPathCollection.Item(tmpStr1).Add(tmpStr)
+            Else
+                Dim tmpTaskPathCollection As New MSVBCollection
+                tmpTaskPathCollection.Add(tmpStr)
+                TaskPathCollection.Add(Item:=tmpTaskPathCollection, Key:=tmpStr1)
+            End If
+        Next
         'Dim TaskPathSource As New AutoCompleteStringCollection()
         'TaskPathSource.Add("AscenX")
         'TaskPathSource.Add("AscenX/TamIoT")
