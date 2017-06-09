@@ -242,20 +242,15 @@ Public Class Form1
                                               MatchCase:=True).Row
                 End If
             Loop Until (String.IsNullOrEmpty(tmpStr1))
-            tmpStr1 = Trim(CStr(aKey.Value))
-            If (TaskPathCollection.Contains(tmpStr1)) Then
-                TaskPathCollection.Item(tmpStr1).Add(tmpStr)
-            Else
-                Dim tmpTaskPathCollection As New MSVBCollection
-                tmpTaskPathCollection.Add(tmpStr)
-                TaskPathCollection.Add(Item:=tmpTaskPathCollection, Key:=tmpStr1)
-            End If
+            TaskPathCollection.Add(tmpStr)
+            ComboBoxTaskPath.Items.Add(tmpStr)
         Next
         'Dim TaskPathSource As New AutoCompleteStringCollection()
-        'TaskPathSource.Add("AscenX")
-        'TaskPathSource.Add("AscenX/TamIoT")
-        'TaskPathSource.Add("AscenX/HieuCMS")
-        'TaskPathSource.Add("AscenX/SonSETraining")
+        'TaskPathSource.Add("/AscenX")
+        'TaskPathSource.Add("/AscenX/TamIoT")
+        'TaskPathSource.Add("/AscenX/TamIoT/AutoUpdatePiSG")
+        'TaskPathSource.Add("/AscenX/HieuCMS")
+        'TaskPathSource.Add("/AscenX/SonSETraining")
         'ComboBoxTaskPath.AutoCompleteCustomSource = TaskPathSource
         'ComboBoxTaskPath.AutoCompleteMode = AutoCompleteMode.SuggestAppend
         'ComboBoxTaskPath.AutoCompleteSource = AutoCompleteSource.CustomSource
@@ -280,5 +275,23 @@ Public Class Form1
 
     Private Sub ButtonClearComboBoxTaskPath_Click(sender As Object, e As EventArgs) Handles ButtonClearComboBoxTaskPath.Click
         ComboBoxTaskPath.ResetText()
+    End Sub
+
+    Private Sub ComboBoxTaskPath_TextChanged(sender As Object, e As EventArgs) Handles ComboBoxTaskPath.TextChanged
+        ComboBoxTaskPath.Items.Clear()
+
+        ComboBoxTaskPath.Select(ComboBoxTaskPath.Text.Length, 0)
+        For Each tmpStr As String In TaskPathCollection
+            If (tmpStr.Contains(ComboBoxTaskPath.Text.Trim)) Then
+                ComboBoxTaskPath.Items.Add(tmpStr)
+            End If
+        Next
+        If (ComboBoxTaskPath.Items.Count > 1) Then
+            ComboBoxTaskPath.Update()
+            ComboBoxTaskPath.DroppedDown = True
+        Else
+            ComboBoxTaskPath.DroppedDown = False
+        End If
+
     End Sub
 End Class
