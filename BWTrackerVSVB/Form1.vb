@@ -1,6 +1,7 @@
 ﻿Imports Excel = Microsoft.Office.Interop.Excel
 Imports MSOffice = Microsoft.Office.Core
-Imports MSVBCollection = Microsoft.VisualBasic.Collection
+Imports MSVBCollection = Microsoft.VisualBasic.Collection 'A Collection With Base Zero
+Imports StringCollection = System.Collections.Specialized.StringCollection
 Public Class Form1
     Private ExcelFilePath As String = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) _
                                     & "\BWTracker.xlsx"
@@ -10,7 +11,16 @@ Public Class Form1
     Private BWTrackerWB As Excel.Workbook
     Private BWTrackerWS As Excel.Worksheet
     Private KeyHierarchyWS As Excel.Worksheet
-    Private TaskPathCollection As New MSVBCollection
+    Private TaskPathCollection As New StringCollection
+    Private TaskPathKeyInOneStringForFastKeyScan As String
+    Private currentComboBoxTaskPathTabBiasDirection As Integer = 1
+    Private HeaderCell_key As Excel.Range
+    Private HeaderCell_parentkey As Excel.Range
+    Private KeyRng1 As Excel.Range
+    Private BWTrackerWSHeaderCellCollection As New MSVBCollection
+    Private currentRowInBWTrackerWS As Integer
+    Private lastStartingMoment As Date
+    Private lastStopMoment As Date
 
     Private Sub StoreNumbersOfHiddenRowsIntoACollection(ASheet As Excel.Worksheet, ByRef DestinationCollection As MSVBCollection)
         For i As Integer = 1 To ASheet.UsedRange.Rows.Count
@@ -128,6 +138,8 @@ Public Class Form1
                     HeaderCell = DirectCast(ASheet.Cells(tmpHeaderRowNumber,
                                                          LastDataCellOfARow(ASheet.Rows(tmpHeaderRowNumber)).Column), Excel.Range)
                 End If
+            Else
+                HeaderCell = Nothing
             End If
         End If
         If (PureDataMode) Then
@@ -137,8 +149,6 @@ Public Class Form1
     End Function
 
     Private Sub ButtonClearTextBoxTaskDescription_Click(sender As Object, e As EventArgs) Handles ButtonClearTextBoxTaskDescription.Click
-        'MsgBox(KeyHierarchyWS.UsedRange.Find(TextBoxTaskDescription.Text, LookIn:=Excel.XlFindLookIn.xlValues).Address)
-        MsgBox(HeaderCell(BWTrackerWS).Address)
         TextBoxTaskDescription.Clear()
     End Sub
 
@@ -157,6 +167,33 @@ Public Class Form1
         Me.Height = 262
         ButtonTimingAnimation.Enabled = True
         ButtonTimingAnimation.Visible = True
+        currentRowInBWTrackerWS = LastDataCellOfAColumn(BWTrackerWS.Columns(BWTrackerWSHeaderCellCollection.Item("task description").Column), True).Row + 1
+        lastStartingMoment = Now
+        BWTrackerWS.Cells(currentRowInBWTrackerWS, BWTrackerWSHeaderCellCollection.Item("day").Column).Value _
+            = lastStartingMoment.DayOfWeek.ToString
+        BWTrackerWS.Cells(currentRowInBWTrackerWS, BWTrackerWSHeaderCellCollection.Item("date").Column).Value _
+            = lastStartingMoment.Day.ToString
+        BWTrackerWS.Cells(currentRowInBWTrackerWS, BWTrackerWSHeaderCellCollection.Item("month").Column).Value _
+            = MonthName(lastStartingMoment.Month)
+        BWTrackerWS.Cells(currentRowInBWTrackerWS, BWTrackerWSHeaderCellCollection.Item("year").Column).Value _
+            = lastStartingMoment.Year.ToString
+        BWTrackerWS.Cells(currentRowInBWTrackerWS, BWTrackerWSHeaderCellCollection.Item("week").Column).Value _
+            = DateDiff("ww", DateSerial(Today.Year, 1, 1), lastStartingMoment, FirstDayOfWeek.Monday, FirstWeekOfYear.Jan1).ToString
+        BWTrackerWS.Cells(currentRowInBWTrackerWS, BWTrackerWSHeaderCellCollection.Item("start hour").Column).Value _
+            = lastStartingMoment.Hour.ToString
+        BWTrackerWS.Cells(currentRowInBWTrackerWS, BWTrackerWSHeaderCellCollection.Item("start min").Column).Value _
+            = lastStartingMoment.Minute.ToString
+        BWTrackerWS.Cells(currentRowInBWTrackerWS, BWTrackerWSHeaderCellCollection.Item("start sec").Column).Value _
+            = lastStartingMoment.Second.ToString
+        BWTrackerWS.Cells(currentRowInBWTrackerWS, BWTrackerWSHeaderCellCollection.Item("task description").Column).Value _
+            = TextBoxTaskDescription.Text.Trim
+        BWTrackerWS.Cells(currentRowInBWTrackerWS, BWTrackerWSHeaderCellCollection.Item("more information").Column).Value _
+           = TextBoxMoreInfo.Text.Trim
+        Dim TaskPath As String() = ComboBoxTaskPath.Text.Split("/".ToCharArray, StringSplitOptions.RemoveEmptyEntries)
+        For i As Integer = 0 To (TaskPath.Count - 1) Step 1
+            BWTrackerWS.Cells(currentRowInBWTrackerWS, BWTrackerWSHeaderCellCollection.Item(i.ToString).Column).Value _
+                = TaskPath.ElementAt(i)
+        Next
     End Sub
 
     Private Sub ButtonTimingAnimation_MouseDown(sender As Object, e As MouseEventArgs) Handles ButtonTimingAnimation.MouseDown
@@ -194,6 +231,28 @@ Public Class Form1
         Me.Height = 152
         TaskSettingPanel.Enabled = True
         TaskSettingPanel.Visible = True
+        Dim aDateColNum As Integer = BWTrackerWSHeaderCellCollection.Item("date").Column
+        Dim aMonthColNum As Integer = BWTrackerWSHeaderCellCollection.Item("month").Column
+        Dim aYearColNum As Integer = BWTrackerWSHeaderCellCollection.Item("year").Column
+        Dim aDurationColumn As Integer = BWTrackerWSHeaderCellCollection.Item("duration").Column
+        Dim aWeekColumn As Integer = BWTrackerWSHeaderCellCollection.Item("week").Column
+        Dim currentWeek As String = DateDiff("ww", DateSerial(Today.Year, 1, 1), lastStartingMoment, FirstDayOfWeek.Monday, FirstWeekOfYear.Jan1).ToString
+        Dim todayTimeSpan As TimeSpan
+        Dim thisWeekTimeSpan As TimeSpan
+        Dim sameYear As Boolean = False
+        For i As Integer = 1 To BWTrackerWS.UsedRange.Rows.Count Step 1
+            sameYear = (BWTrackerWS.Cells(i, aMonthColNum).Value = MonthName(lastStopMoment.Month))
+            If ((BWTrackerWS.Cells(i, aDateColNum).Value = lastStopMoment.Day.ToString) _
+                And sameYear _
+                And (BWTrackerWS.Cells(i, aYearColNum).Value = lastStopMoment.Year.ToString)) Then
+                todayTimeSpan += TimeSpan.Parse(BWTrackerWS.Cells(i, aDurationColumn).Value)
+            End If
+            If (sameYear And (BWTrackerWS.Cells(i, aWeekColumn).Value = currentWeek)) Then
+                thisWeekTimeSpan += TimeSpan.Parse(BWTrackerWS.Cells(i, aDurationColumn).Value)
+            End If
+        Next
+        LabelTodayDuration.Text = todayTimeSpan.ToString
+        LabelThisWeekDuration.Text = thisWeekTimeSpan.ToString
     End Sub
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -211,12 +270,10 @@ Public Class Form1
         End While
         BWTrackerWS = BWTrackerWB.Worksheets(BWTrackerWSName)
         KeyHierarchyWS = BWTrackerWB.Worksheets(KeyHierarchyWSName)
-        Dim HeaderCell_key As Excel.Range = HeaderCell(KeyHierarchyWS, "key")
-        Dim HeaderCell_parentkey As Excel.Range = HeaderCell(KeyHierarchyWS, "parent key")
-        Dim KeyRng1 As Excel.Range = KeyHierarchyWS.Range(KeyHierarchyWS.Cells(HeaderCell_key.Row + 1, HeaderCell_key.Column),
+        HeaderCell_key = HeaderCell(KeyHierarchyWS, "key")
+        HeaderCell_parentkey = HeaderCell(KeyHierarchyWS, "parent key")
+        KeyRng1 = KeyHierarchyWS.Range(KeyHierarchyWS.Cells(HeaderCell_key.Row + 1, HeaderCell_key.Column),
                                                           LastDataCellOfAColumn(KeyHierarchyWS.Columns(HeaderCell_key.Column)))
-        'Dim ParentOfKeyRng1 As Excel.Range = KeyHierarchyWS.Range(KeyHierarchyWS.Cells(HeaderCell_parentkey.Row + 1, HeaderCell_parentkey.Column),
-        '                                                  LastDataCellOfAColumn(KeyHierarchyWS.Columns(HeaderCell_parentkey.Column)))
         Dim tmpStr As String = ""
         Dim tmpStr1 As String = ""
         Dim currentColumn As Integer
@@ -226,6 +283,7 @@ Public Class Form1
             currentRow = aKey.Row
             currentColumn = aKey.Column
             tmpStr = Trim(CStr(aKey.Value))
+            TaskPathKeyInOneStringForFastKeyScan &= "    " & tmpStr & "   "
             Do
                 If (currentColumn = HeaderCell_key.Column) Then
                     currentColumn = HeaderCell_parentkey.Column
@@ -245,15 +303,14 @@ Public Class Form1
             TaskPathCollection.Add(tmpStr)
             ComboBoxTaskPath.Items.Add(tmpStr)
         Next
-        'Dim TaskPathSource As New AutoCompleteStringCollection()
-        'TaskPathSource.Add("/AscenX")
-        'TaskPathSource.Add("/AscenX/TamIoT")
-        'TaskPathSource.Add("/AscenX/TamIoT/AutoUpdatePiSG")
-        'TaskPathSource.Add("/AscenX/HieuCMS")
-        'TaskPathSource.Add("/AscenX/SonSETraining")
-        'ComboBoxTaskPath.AutoCompleteCustomSource = TaskPathSource
-        'ComboBoxTaskPath.AutoCompleteMode = AutoCompleteMode.SuggestAppend
-        'ComboBoxTaskPath.AutoCompleteSource = AutoCompleteSource.CustomSource
+        tmpRng = HeaderCell(BWTrackerWS,,,, True)
+        currentRow = tmpRng.Row
+        currentColumn = tmpRng.Column
+        For i As Integer = 1 To currentColumn Step 1
+            tmpRng = DirectCast(BWTrackerWS.Cells(currentRow, i), Excel.Range)
+            BWTrackerWSHeaderCellCollection.Add(Item:=tmpRng,
+                                                Key:=Trim(CStr(tmpRng.Value)))
+        Next
     End Sub
 
     Private Sub Form1_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
@@ -265,7 +322,15 @@ Public Class Form1
     End Sub
 
     Private Sub SaveBWTrackerWB()
-
+        lastStopMoment = Now
+        BWTrackerWS.Cells(currentRowInBWTrackerWS, BWTrackerWSHeaderCellCollection.Item("stop hour").Column).Value _
+            = lastStopMoment.Hour.ToString
+        BWTrackerWS.Cells(currentRowInBWTrackerWS, BWTrackerWSHeaderCellCollection.Item("stop min").Column).Value _
+            = lastStopMoment.Minute.ToString
+        BWTrackerWS.Cells(currentRowInBWTrackerWS, BWTrackerWSHeaderCellCollection.Item("stop sec").Column).Value _
+            = lastStopMoment.Second.ToString
+        BWTrackerWS.Cells(currentRowInBWTrackerWS, BWTrackerWSHeaderCellCollection.Item("duration").Column).Value _
+            = TimeSpan.FromSeconds(DateDiff("s", lastStopMoment, lastStartingMoment)).Duration.ToString
         BWTrackerWB.Save()
     End Sub
 
@@ -277,21 +342,76 @@ Public Class Form1
         ComboBoxTaskPath.ResetText()
     End Sub
 
-    Private Sub ComboBoxTaskPath_TextChanged(sender As Object, e As EventArgs) Handles ComboBoxTaskPath.TextChanged
-        ComboBoxTaskPath.Items.Clear()
-
-        ComboBoxTaskPath.Select(ComboBoxTaskPath.Text.Length, 0)
-        For Each tmpStr As String In TaskPathCollection
-            If (tmpStr.Contains(ComboBoxTaskPath.Text.Trim)) Then
-                ComboBoxTaskPath.Items.Add(tmpStr)
+    Protected Overrides Function ProcessCmdKey(ByRef msg As Message, keyData As Keys) As Boolean
+        If (ComboBoxTaskPath.Focused) Then
+            If (keyData = Keys.Tab) Then
+                Dim currentMaxIndex As Integer = ComboBoxTaskPath.Items.Count - 1
+                If (currentMaxIndex > 0) Then
+                    If (ComboBoxTaskPath.SelectedIndex < 1) Then
+                        currentComboBoxTaskPathTabBiasDirection = 1
+                    ElseIf (ComboBoxTaskPath.SelectedIndex >= currentMaxIndex) Then
+                        currentComboBoxTaskPathTabBiasDirection = -1
+                    End If
+                    ComboBoxTaskPath.SelectedIndex += currentComboBoxTaskPathTabBiasDirection
+                ElseIf (currentMaxIndex = 0) Then
+                    ComboBoxTaskPath.SelectedIndex = 0
+                End If
+                ComboBoxTaskPath.Select(0, ComboBoxTaskPath.Text.Length)
+                Return True
+            ElseIf (keyData = Keys.Enter) Then
+                If (Not TaskPathCollection.Contains(ComboBoxTaskPath.Text.Trim)) Then
+                    ComboBoxTaskPath.ResetText()
+                End If
+                TextBoxMoreInfo.Select()
             End If
-        Next
-        If (ComboBoxTaskPath.Items.Count > 1) Then
-            ComboBoxTaskPath.Update()
-            ComboBoxTaskPath.DroppedDown = True
-        Else
-            ComboBoxTaskPath.DroppedDown = False
         End If
+        Return MyBase.ProcessCmdKey(msg, keyData)
+    End Function
 
+    Private Sub ComboBoxTaskPath_KeyPress(sender As Object, e As KeyPressEventArgs) Handles ComboBoxTaskPath.KeyPress
+        If e.KeyChar = ChrW(13) Then
+            Exit Sub
+        End If
+        Dim currentText As String = ComboBoxTaskPath.Text.Trim
+        If (currentText.Length > 1) Then
+            For i As Integer = 1 To ComboBoxTaskPath.Items.Count Step 1
+                ComboBoxTaskPath.Items.RemoveAt(0)
+            Next
+            If ((TaskPathKeyInOneStringForFastKeyScan.IndexOf(currentText, 0, StringComparison.CurrentCultureIgnoreCase) >= 0) _
+                Or (currentText.Contains("/"))) Then
+                For Each tmpStr As String In TaskPathCollection
+                    If (tmpStr.IndexOf(currentText, 0, StringComparison.CurrentCultureIgnoreCase) >= 0) Then
+                        ComboBoxTaskPath.Items.Add(tmpStr)
+                    End If
+                Next
+            End If
+            ComboBoxTaskPath.Update()
+            Try
+                If (ComboBoxTaskPath.Items.Count > 0) Then
+                    If (Not ComboBoxTaskPath.DroppedDown) Then
+                        ComboBoxTaskPath.DroppedDown = True
+                    End If
+                Else
+                    If (ComboBoxTaskPath.DroppedDown) Then
+                        ComboBoxTaskPath.DroppedDown = False
+                    End If
+                End If
+            Catch
+            End Try
+        End If
+        Me.Cursor = Cursors.Default
+        Cursor.Show()
+    End Sub
+
+    Private Sub TextBoxTaskDescription_KeyDown(sender As Object, e As KeyEventArgs) Handles TextBoxTaskDescription.KeyDown
+        If (e.KeyCode = Keys.Enter) Then
+            ComboBoxTaskPath.Select()
+        End If
+    End Sub
+
+    Private Sub TextBoxMoreInfo_KeyDown(sender As Object, e As KeyEventArgs) Handles TextBoxMoreInfo.KeyDown
+        If (e.KeyCode = Keys.Enter) Then
+            ButtonStart.Select()
+        End If
     End Sub
 End Class

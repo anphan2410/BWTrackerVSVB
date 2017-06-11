@@ -36,6 +36,8 @@ Partial Class Form1
         Me.ButtonStart = New System.Windows.Forms.Button()
         Me.ComboBoxTaskPath = New System.Windows.Forms.ComboBox()
         Me.TimerButtonTimingAnimationDown = New System.Windows.Forms.Timer(Me.components)
+        Me.LabelTodayDuration = New System.Windows.Forms.Label()
+        Me.LabelThisWeekDuration = New System.Windows.Forms.Label()
         Me.TaskSettingPanel.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -84,6 +86,8 @@ Partial Class Form1
         Me.TaskSettingPanel.Controls.Add(Me.ButtonClearTextBoxTaskDescription, 15, 0)
         Me.TaskSettingPanel.Controls.Add(Me.ButtonStart, 6, 3)
         Me.TaskSettingPanel.Controls.Add(Me.ComboBoxTaskPath, 3, 1)
+        Me.TaskSettingPanel.Controls.Add(Me.LabelTodayDuration, 0, 3)
+        Me.TaskSettingPanel.Controls.Add(Me.LabelThisWeekDuration, 12, 3)
         Me.TaskSettingPanel.Location = New System.Drawing.Point(13, 13)
         Me.TaskSettingPanel.Margin = New System.Windows.Forms.Padding(0)
         Me.TaskSettingPanel.Name = "TaskSettingPanel"
@@ -116,7 +120,7 @@ Partial Class Form1
         Me.ButtonClearComboBoxTaskPath.Margin = New System.Windows.Forms.Padding(0)
         Me.ButtonClearComboBoxTaskPath.Name = "ButtonClearComboBoxTaskPath"
         Me.ButtonClearComboBoxTaskPath.Size = New System.Drawing.Size(30, 22)
-        Me.ButtonClearComboBoxTaskPath.TabIndex = 14
+        Me.ButtonClearComboBoxTaskPath.TabIndex = 2
         Me.ButtonClearComboBoxTaskPath.Text = "X"
         Me.ButtonClearComboBoxTaskPath.UseVisualStyleBackColor = True
         '
@@ -143,7 +147,7 @@ Partial Class Form1
         Me.ButtonClearTextBoxMoreInfo.Margin = New System.Windows.Forms.Padding(0)
         Me.ButtonClearTextBoxMoreInfo.Name = "ButtonClearTextBoxMoreInfo"
         Me.ButtonClearTextBoxMoreInfo.Size = New System.Drawing.Size(30, 22)
-        Me.ButtonClearTextBoxMoreInfo.TabIndex = 11
+        Me.ButtonClearTextBoxMoreInfo.TabIndex = 3
         Me.ButtonClearTextBoxMoreInfo.Text = "X"
         Me.ButtonClearTextBoxMoreInfo.UseVisualStyleBackColor = True
         '
@@ -157,7 +161,7 @@ Partial Class Form1
         Me.TextBoxMoreInfo.Margin = New System.Windows.Forms.Padding(0)
         Me.TextBoxMoreInfo.Name = "TextBoxMoreInfo"
         Me.TextBoxMoreInfo.Size = New System.Drawing.Size(264, 21)
-        Me.TextBoxMoreInfo.TabIndex = 10
+        Me.TextBoxMoreInfo.TabIndex = 4
         '
         'LabelMoreInfo
         '
@@ -208,7 +212,7 @@ Partial Class Form1
         Me.ButtonClearTextBoxTaskDescription.Margin = New System.Windows.Forms.Padding(0)
         Me.ButtonClearTextBoxTaskDescription.Name = "ButtonClearTextBoxTaskDescription"
         Me.ButtonClearTextBoxTaskDescription.Size = New System.Drawing.Size(30, 22)
-        Me.ButtonClearTextBoxTaskDescription.TabIndex = 2
+        Me.ButtonClearTextBoxTaskDescription.TabIndex = 0
         Me.ButtonClearTextBoxTaskDescription.Text = "X"
         Me.ButtonClearTextBoxTaskDescription.UseVisualStyleBackColor = True
         '
@@ -221,7 +225,7 @@ Partial Class Form1
         Me.ButtonStart.Margin = New System.Windows.Forms.Padding(0)
         Me.ButtonStart.Name = "ButtonStart"
         Me.ButtonStart.Size = New System.Drawing.Size(88, 22)
-        Me.ButtonStart.TabIndex = 15
+        Me.ButtonStart.TabIndex = 7
         Me.ButtonStart.Text = "START"
         Me.ButtonStart.UseVisualStyleBackColor = True
         '
@@ -236,11 +240,37 @@ Partial Class Form1
         Me.ComboBoxTaskPath.Margin = New System.Windows.Forms.Padding(0)
         Me.ComboBoxTaskPath.Name = "ComboBoxTaskPath"
         Me.ComboBoxTaskPath.Size = New System.Drawing.Size(264, 23)
-        Me.ComboBoxTaskPath.TabIndex = 16
+        Me.ComboBoxTaskPath.TabIndex = 5
         '
         'TimerButtonTimingAnimationDown
         '
         Me.TimerButtonTimingAnimationDown.Interval = 5000
+        '
+        'LabelTodayDuration
+        '
+        Me.LabelTodayDuration.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.LabelTodayDuration.AutoSize = True
+        Me.TaskSettingPanel.SetColumnSpan(Me.LabelTodayDuration, 4)
+        Me.LabelTodayDuration.Location = New System.Drawing.Point(0, 66)
+        Me.LabelTodayDuration.Margin = New System.Windows.Forms.Padding(0)
+        Me.LabelTodayDuration.Name = "LabelTodayDuration"
+        Me.LabelTodayDuration.Size = New System.Drawing.Size(88, 24)
+        Me.LabelTodayDuration.TabIndex = 13
+        '
+        'LabelThisWeekDuration
+        '
+        Me.LabelThisWeekDuration.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.LabelThisWeekDuration.AutoSize = True
+        Me.TaskSettingPanel.SetColumnSpan(Me.LabelThisWeekDuration, 4)
+        Me.LabelThisWeekDuration.Location = New System.Drawing.Point(264, 66)
+        Me.LabelThisWeekDuration.Margin = New System.Windows.Forms.Padding(0)
+        Me.LabelThisWeekDuration.Name = "LabelThisWeekDuration"
+        Me.LabelThisWeekDuration.Size = New System.Drawing.Size(96, 24)
+        Me.LabelThisWeekDuration.TabIndex = 14
         '
         'Form1
         '
@@ -272,4 +302,6 @@ Partial Class Form1
     Friend WithEvents ButtonStart As Button
     Friend WithEvents TimerButtonTimingAnimationDown As Timer
     Friend WithEvents ComboBoxTaskPath As ComboBox
+    Friend WithEvents LabelTodayDuration As Label
+    Friend WithEvents LabelThisWeekDuration As Label
 End Class
