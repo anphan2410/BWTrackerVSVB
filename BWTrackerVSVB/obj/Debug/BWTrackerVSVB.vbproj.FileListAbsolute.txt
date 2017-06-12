@@ -9,3 +9,14 @@ D:\GitMe\anphan2410\BWTrackerVSVB\BWTrackerVSVB\obj\Debug\BWTrackerVSVB.exe
 D:\GitMe\anphan2410\BWTrackerVSVB\BWTrackerVSVB\obj\Debug\BWTrackerVSVB.xml
 D:\GitMe\anphan2410\BWTrackerVSVB\BWTrackerVSVB\obj\Debug\BWTrackerVSVB.pdb
 D:\GitMe\anphan2410\BWTrackerVSVB\BWTrackerVSVB\obj\Debug\BWTrackerVSVB.vbproj.ResolveComReference.cache
+D:\An.Phan\GitMe\anphan2410\BWTrackerVSVB\BWTrackerVSVB\bin\Debug\BWTrackerVSVB.exe
+D:\An.Phan\GitMe\anphan2410\BWTrackerVSVB\BWTrackerVSVB\bin\Debug\BWTrackerVSVB.pdb
+D:\An.Phan\GitMe\anphan2410\BWTrackerVSVB\BWTrackerVSVB\bin\Debug\BWTrackerVSVB.xml
+D:\An.Phan\GitMe\anphan2410\BWTrackerVSVB\BWTrackerVSVB\obj\Debug\BWTrackerVSVB.vbprojResolveAssemblyReference.cache
+D:\An.Phan\GitMe\anphan2410\BWTrackerVSVB\BWTrackerVSVB\obj\Debug\BWTrackerVSVB.vbproj.ResolveComReference.cache
+D:\An.Phan\GitMe\anphan2410\BWTrackerVSVB\BWTrackerVSVB\obj\Debug\BWTrackerVSVB.Form1.resources
+D:\An.Phan\GitMe\anphan2410\BWTrackerVSVB\BWTrackerVSVB\obj\Debug\BWTrackerVSVB.Resources.resources
+D:\An.Phan\GitMe\anphan2410\BWTrackerVSVB\BWTrackerVSVB\obj\Debug\BWTrackerVSVB.vbproj.GenerateResource.Cache
+D:\An.Phan\GitMe\anphan2410\BWTrackerVSVB\BWTrackerVSVB\obj\Debug\BWTrackerVSVB.exe
+D:\An.Phan\GitMe\anphan2410\BWTrackerVSVB\BWTrackerVSVB\obj\Debug\BWTrackerVSVB.xml
+D:\An.Phan\GitMe\anphan2410\BWTrackerVSVB\BWTrackerVSVB\obj\Debug\BWTrackerVSVB.pdb

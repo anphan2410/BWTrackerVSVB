@@ -21,6 +21,9 @@ Public Class Form1
     Private currentRowInBWTrackerWS As Integer
     Private lastStartingMoment As Date
     Private lastStopMoment As Date
+    Private lastTaskDuration As TimeSpan
+    Dim todayTimeSpan As TimeSpan
+    Dim thisWeekTimeSpan As TimeSpan
 
     Private Sub StoreNumbersOfHiddenRowsIntoACollection(ASheet As Excel.Worksheet, ByRef DestinationCollection As MSVBCollection)
         For i As Integer = 1 To ASheet.UsedRange.Rows.Count
@@ -231,26 +234,8 @@ Public Class Form1
         Me.Height = 152
         TaskSettingPanel.Enabled = True
         TaskSettingPanel.Visible = True
-        Dim aDateColNum As Integer = BWTrackerWSHeaderCellCollection.Item("date").Column
-        Dim aMonthColNum As Integer = BWTrackerWSHeaderCellCollection.Item("month").Column
-        Dim aYearColNum As Integer = BWTrackerWSHeaderCellCollection.Item("year").Column
-        Dim aDurationColumn As Integer = BWTrackerWSHeaderCellCollection.Item("duration").Column
-        Dim aWeekColumn As Integer = BWTrackerWSHeaderCellCollection.Item("week").Column
-        Dim currentWeek As String = DateDiff("ww", DateSerial(Today.Year, 1, 1), lastStartingMoment, FirstDayOfWeek.Monday, FirstWeekOfYear.Jan1).ToString
-        Dim todayTimeSpan As TimeSpan
-        Dim thisWeekTimeSpan As TimeSpan
-        Dim sameYear As Boolean = False
-        For i As Integer = 1 To BWTrackerWS.UsedRange.Rows.Count Step 1
-            sameYear = (BWTrackerWS.Cells(i, aMonthColNum).Value = MonthName(lastStopMoment.Month))
-            If ((BWTrackerWS.Cells(i, aDateColNum).Value = lastStopMoment.Day.ToString) _
-                And sameYear _
-                And (BWTrackerWS.Cells(i, aYearColNum).Value = lastStopMoment.Year.ToString)) Then
-                todayTimeSpan += TimeSpan.Parse(BWTrackerWS.Cells(i, aDurationColumn).Value)
-            End If
-            If (sameYear And (BWTrackerWS.Cells(i, aWeekColumn).Value = currentWeek)) Then
-                thisWeekTimeSpan += TimeSpan.Parse(BWTrackerWS.Cells(i, aDurationColumn).Value)
-            End If
-        Next
+        todayTimeSpan += lastTaskDuration
+        thisWeekTimeSpan += lastTaskDuration
         LabelTodayDuration.Text = todayTimeSpan.ToString
         LabelThisWeekDuration.Text = thisWeekTimeSpan.ToString
     End Sub
@@ -311,6 +296,26 @@ Public Class Form1
             BWTrackerWSHeaderCellCollection.Add(Item:=tmpRng,
                                                 Key:=Trim(CStr(tmpRng.Value)))
         Next
+        Dim aDateColNum As Integer = BWTrackerWSHeaderCellCollection.Item("date").Column
+        Dim aMonthColNum As Integer = BWTrackerWSHeaderCellCollection.Item("month").Column
+        Dim aYearColNum As Integer = BWTrackerWSHeaderCellCollection.Item("year").Column
+        Dim aDurationColumn As Integer = BWTrackerWSHeaderCellCollection.Item("duration").Column
+        Dim aWeekColumn As Integer = BWTrackerWSHeaderCellCollection.Item("week").Column
+        Dim currentWeek As String = DateDiff("ww", DateSerial(Today.Year, 1, 1), Today, FirstDayOfWeek.Monday, FirstWeekOfYear.Jan1).ToString
+        Dim sameYear As Boolean = False
+        For i As Integer = 1 To BWTrackerWS.UsedRange.Rows.Count Step 1
+            sameYear = (BWTrackerWS.Cells(i, aYearColNum).Value = Today.Year.ToString)
+            If ((BWTrackerWS.Cells(i, aDateColNum).Value = Today.Day.ToString) _
+                And (BWTrackerWS.Cells(i, aMonthColNum).Value = MonthName(Today.Month)) _
+                And sameYear) Then
+                todayTimeSpan += TimeSpan.Parse(BWTrackerWS.Cells(i, aDurationColumn).Value)
+            End If
+            If (sameYear And (BWTrackerWS.Cells(i, aWeekColumn).Value = currentWeek)) Then
+                thisWeekTimeSpan += TimeSpan.Parse(BWTrackerWS.Cells(i, aDurationColumn).Value)
+            End If
+        Next
+        LabelTodayDuration.Text = todayTimeSpan.ToString
+        LabelThisWeekDuration.Text = thisWeekTimeSpan.ToString
     End Sub
 
     Private Sub Form1_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
@@ -329,8 +334,9 @@ Public Class Form1
             = lastStopMoment.Minute.ToString
         BWTrackerWS.Cells(currentRowInBWTrackerWS, BWTrackerWSHeaderCellCollection.Item("stop sec").Column).Value _
             = lastStopMoment.Second.ToString
+        lastTaskDuration = TimeSpan.FromSeconds(DateDiff("s", lastStopMoment, lastStartingMoment)).Duration
         BWTrackerWS.Cells(currentRowInBWTrackerWS, BWTrackerWSHeaderCellCollection.Item("duration").Column).Value _
-            = TimeSpan.FromSeconds(DateDiff("s", lastStopMoment, lastStartingMoment)).Duration.ToString
+            = lastTaskDuration.ToString
         BWTrackerWB.Save()
     End Sub
 
