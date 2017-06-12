@@ -3,10 +3,8 @@ Imports MSOffice = Microsoft.Office.Core
 Imports MSVBCollection = Microsoft.VisualBasic.Collection 'A Collection With Base Zero
 Imports StringCollection = System.Collections.Specialized.StringCollection
 Public Class Form1
-    Private ExcelFilePath As String = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) _
-                                    & "\BWTracker.xlsx"
-    Private BWTrackerWSName As String = "BWTracker"
-    Private KeyHierarchyWSName As String = "KeyHierarchy"
+    Private ConfigFilePath As String = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory, "BWTrackerVSVB.conf")
+    Private BWTrackerExcelFilePath As String = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "BWTracker.xlsx")
     Private ExcelApp As New Excel.Application
     Private BWTrackerWB As Excel.Workbook
     Private BWTrackerWS As Excel.Worksheet
@@ -241,26 +239,64 @@ Public Class Form1
     End Sub
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        BWTrackerWB = ExcelApp.Workbooks.Open(ExcelFilePath)
         Dim tmp As DialogResult
+        Dim tmpStr As String = ""
+        Dim tmpStr1 As String = ""
+        Dim isConfigFileAccessible As Boolean = False
+        If (System.IO.File.Exists(ConfigFilePath)) Then
+            Try
+                Dim fileReader As System.IO.StreamReader = New System.IO.StreamReader(ConfigFilePath)
+                Do While (fileReader.Peek >= 0)
+                    tmpStr1 = fileReader.ReadLine()
+                    If (((tmpStr1.IndexOf("tracker", 0, StringComparison.CurrentCultureIgnoreCase) >= 0) _
+                        Or (tmpStr1.IndexOf("bw", 0, StringComparison.CurrentCultureIgnoreCase) >= 0)) _
+                        And ((tmpStr1.IndexOf("file", 0, StringComparison.CurrentCultureIgnoreCase) >= 0) _
+                        Or (tmpStr1.IndexOf("path", 0, StringComparison.CurrentCultureIgnoreCase) >= 0) _
+                        Or (tmpStr1.IndexOf("excel", 0, StringComparison.CurrentCultureIgnoreCase) >= 0) _
+                        Or (tmpStr1.IndexOf("xls", 0, StringComparison.CurrentCultureIgnoreCase) >= 0))) Then
+                        Dim tmpStrSplit As String() = tmpStr1.Split("=".ToCharArray, StringSplitOptions.RemoveEmptyEntries)
+                        If (tmpStrSplit.Count > 1) Then
+                            BWTrackerExcelFilePath = tmpStrSplit.ElementAt(1).Trim
+                            tmpStr &= "The config file specifies the excel file path: " & Chr(10) & "   " & BWTrackerExcelFilePath & Chr(10)
+                        End If
+                        Exit Do
+                    End If
+                Loop
+                fileReader.Close()
+            Catch ex As Exception
+                tmpStr &= "Error: " & ex.ToString
+            End Try
+        Else
+            tmpStr &= "The config file can not be found !" & Chr(10)
+        End If
+        If (Not System.IO.File.Exists(BWTrackerExcelFilePath)) Then
+            tmpStr &= "The excel file can not be found !" & Chr(10)
+            MsgBox(tmpStr)
+            ExcelApp.Quit()
+            End
+            Exit Sub
+        End If
+        BWTrackerWB = ExcelApp.Workbooks.Open(BWTrackerExcelFilePath)
         While (BWTrackerWB.ReadOnly)
             tmp = MessageBox.Show("The file is currently being used by an another program." & Chr(10) &
                     "Please make sure the file is closed, then try again !", "File Is Being Opened" _
                     , MessageBoxButtons.RetryCancel, MessageBoxIcon.Question)
             If (tmp = DialogResult.Cancel) Then
-                Application.Exit()
+                BWTrackerWB.Close(SaveChanges:=False)
+                ExcelApp.Quit()
+                End
                 Exit Sub
             End If
-            BWTrackerWB = ExcelApp.Workbooks.Open(ExcelFilePath)
+            BWTrackerWB = ExcelApp.Workbooks.Open(BWTrackerExcelFilePath)
         End While
-        BWTrackerWS = BWTrackerWB.Worksheets(BWTrackerWSName)
-        KeyHierarchyWS = BWTrackerWB.Worksheets(KeyHierarchyWSName)
+        BWTrackerWS = BWTrackerWB.Worksheets("BWTracker")
+        KeyHierarchyWS = BWTrackerWB.Worksheets("KeyHierarchy")
         HeaderCell_key = HeaderCell(KeyHierarchyWS, "key")
         HeaderCell_parentkey = HeaderCell(KeyHierarchyWS, "parent key")
         KeyRng1 = KeyHierarchyWS.Range(KeyHierarchyWS.Cells(HeaderCell_key.Row + 1, HeaderCell_key.Column),
                                                           LastDataCellOfAColumn(KeyHierarchyWS.Columns(HeaderCell_key.Column)))
-        Dim tmpStr As String = ""
-        Dim tmpStr1 As String = ""
+        tmpStr = ""
+        tmpStr1 = ""
         Dim currentColumn As Integer
         Dim currentRow As Integer
         Dim tmpRng As Excel.Range
